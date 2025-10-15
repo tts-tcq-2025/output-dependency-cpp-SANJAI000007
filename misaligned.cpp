@@ -2,45 +2,44 @@
 #include <vector>
 #include <string>
 #include <cassert>
-
-struct ColorMap {
-    int number;
-    std::string majorColor;
-    std::string minorColor;
-};
-
-std::vector<ColorMap> generateColorMap()
-{
-    const char* majorColor[] = {"White", "Red", "Black", "Yellow", "Violet"};
-    const char* minorColor[] = {"Blue", "Orange", "Green", "Brown", "Slate"};
-
-    std::vector<ColorMap> colorMapGen;
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            colorMapGen.push_back({i * 5 + j, majorColor[i], minorColor[j]});
+ 
+std::vector<std::string> getColorMap() {
+    const std::vector<std::string> major = {"White", "Red", "Black", "Yellow", "Violet"};
+    const std::vector<std::string> minor = {"Blue", "Orange", "Green", "Brown", "Slate"};
+    std::vector<std::string> colorMap;
+    colorMap.reserve(25);
+ 
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            colorMap.push_back(
+                std::to_string(i * 5 + j) + " | " + major[i] + " | " + minor[i]  // BUG: minor[i] should be minor[j]
+            );
         }
     }
-    return colorMapGen;
+    return colorMap;
 }
-
-void printColorMap(const std::vector<ColorMap>& genColorMap) {
-    for (const auto& pair : genColorMap) {
-        std::cout << pair.number << " | "
-                  << pair.majorColor << " | "
-                  << pair.minorColor << std::endl;
+ 
+int printColorMap() {
+    const auto& colorMap = getColorMap();
+    for (const auto& entry : colorMap) {
+        std::cout << entry << "\n";
     }
+    return static_cast<int>(colorMap.size());
 }
-
+ 
 void testPrintColorMap() {
-    std::cout << "\nPrint color map test\n"; 
-    auto genColorMap = generateColorMap();
-    printColorMap(genColorMap);
-    //int result = printColorMap();
-    assert(genColorMap.size() == 25);
-    //Test for first pair
-    assert(genColorMap[0].number == 0);
-    assert(genColorMap[0].majorColor == "White");
-    assert(genColorMap[0].minorColor == "Blue");
+    std::cout << "\nPrint color map test\n";
+    auto colorMap = getColorMap();
+ 
+    assert(colorMap.size() == 25);
+    assert(colorMap[0] == "0 | White | Blue");      // Will fail
+    assert(colorMap[6] == "6 | Red | Green");       // Will fail
+    assert(colorMap[24] == "24 | Violet | Slate");  // Will fail
+ 
     std::cout << "All is well (maybe!)\n";
-
+}
+ 
+int main() {
+    testPrintColorMap();
+    return 0;
 }
